@@ -1,26 +1,59 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ivory: #efe6d4;
+  --ivory-soft: #f4eee3;
+  --parchment: #e7dcc6;
+  --ink: #1b1610;
+  --charcoal: #2a231b;
+  --walnut: #5a3d2e;
+  --walnut-deep: #3d291f;
+  --muted: #6f6658;
+  --rule: #c9bba4;
+  --line: rgba(27, 22, 16, 0.12);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ivory: var(--ivory);
+  --color-ivory-soft: var(--ivory-soft);
+  --color-parchment: var(--parchment);
+  --color-ink: var(--ink);
+  --color-charcoal: var(--charcoal);
+  --color-walnut: var(--walnut);
+  --color-walnut-deep: var(--walnut-deep);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-line: var(--line);
+  --font-sans: var(--font-source-sans);
+  --font-serif: var(--font-cormorant);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--ivory);
+  color: var(--ink);
+  font-family: var(--font-sans), "Segoe UI", sans-serif;
+}
+
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: color-mix(in srgb, var(--walnut) 28%, var(--ivory));
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 1px solid var(--walnut);
+  outline-offset: 3px;
 }

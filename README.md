@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ANTIKA
 
-## Getting Started
+Онлајн антикварница. Слоган: **Предмети со историја.**
 
-First, run the development server:
+Јавниот интерфејс е на македонски јазик.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Фаза 0
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Архитектура, Next.js, PostgreSQL, Prisma, автентикација, валидација и структура на проектот. Јавниот каталог сè уште не се гради.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Детали: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Локално стартување
 
-## Learn More
+1. `docker compose up -d`
+2. Копирај `.env.example` во `.env` и постави `AUTH_SECRET`
+3. `npx prisma migrate dev`
+4. `npx prisma db seed`
+5. `npm run dev`
 
-To learn more about Next.js, take a look at the following resources:
+Отвори [http://localhost:3000](http://localhost:3000). Админ најава: `/најава`. Проверка на база: `/api/health`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Локалната bootstrap сметка е во `.env` (`BOOTSTRAP_ADMIN_EMAIL` / `BOOTSTRAP_ADMIN_PASSWORD`). Промени ги пред било каков вистински пристап.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+На оваа машина, Prisma postinstall скриптите мора да бидат одобрени (`npm install-scripts approve prisma @prisma/client @prisma/engines`), инаку клиентот не се генерира.

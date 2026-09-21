@@ -1,0 +1,405 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  CUSTOMER
+}
+
+enum ItemStatus {
+  DRAFT
+  PUBLISHED
+  AVAILABLE
+  RESERVED
+  SOLD
+  ARCHIVED
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum InquiryStatus {
+  NEW
+  IN_REVIEW
+  CONTACTED
+  REPLIED
+  CLOSED
+}
+
+enum ItemRequestStatus {
+  NEW
+  IN_REVIEW
+  CONTACTED
+  MATCHED
+  CLOSED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PAID
+  FULFILLED
+  CANCELLED
+  REVERSED
+}
+
+enum MediaKind {
+  IMAGE
+  VIDEO
+}
+
+enum ReservationStatus {
+  ACTIVE
+  CONFIRMED
+  EXPIRED
+  CANCELLED
+}
+
+enum FulfillmentMethod {
+  PICKUP
+  ARRANGED_DELIVERY
+}
+
+enum StorageProvider {
+  LOCAL
+  S3
+  R2
+}
+
+enum SocialProvider {
+  GOOGLE
+  FACEBOOK
+}
+
+enum ItemCondition {
+  NEW_UNUSED
+  EXCELLENT
+  VERY_GOOD
+  GOOD
+  USED
+  RESTORATION
+}
+
+model User {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  passwordHash    String?
+  name            String
+  role            UserRole  @default(CUSTOMER)
+  isActive        Boolean   @default(true)
+  emailVerifiedAt DateTime?
+  phone           String?
+  city            String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  inquiries    Inquiry[]
+  itemRequests ItemRequest[]
+  favorites    Favorite[]
+  orders       Order[]
+  reservationsOwned     Reservation[] @relation("ReservationCustomer")
+  reservationsCreated   Reservation[] @relation("ReservationCreatedBy")
+  reservationsCancelled Reservation[] @relation("ReservationCancelledBy")
+  reservationsConfirmed Reservation[] @relation("ReservationConfirmedBy")
+  ordersCreated         Order[]       @relation("OrderCreatedBy")
+  ordersReversed        Order[]       @relation("OrderReversedBy")
+  socialIdentities      SocialIdentity[]
+
+  @@index([role])
+}
+
+model SocialIdentity {
+  id                String         @id @default(uuid())
+  provider          SocialProvider
+  providerAccountId String
+  userId            String
+  email             String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  name        String
+  description String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  parentId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryTree")
+  items    Item[]
+
+  @@index([parentId])
+}
+
+model Item {
+  id                String     @id @default(uuid())
+  referenceNumber   String     @unique
+  slug              String     @unique
+  title             String
+  categoryId        String
+  periodLabel       String?
+  yearFrom          Int?
+  yearTo            Int?
+  origin            String?
+  material          String?
+  maker               String?
+  condition           ItemCondition?
+  conditionNotes      String?
+  dimensions          String?
+  weight              String?
+  provenance          String?
+  authenticityNotes   String?
+  documentationNotes  String?
+  expertNotes         String?
+  certificateNotes    String?
+  shortDescription    String?
+  description         String?
+  isDemo              Boolean        @default(false)
+  price             Decimal    @db.Decimal(12, 2)
+  currency          String     @default("MKD")
+  status            ItemStatus @default(DRAFT)
+  publishedAt       DateTime?
+  reservedUntil     DateTime?
+  soldAt            DateTime?
+  seoTitle          String?
+  seoDescription    String?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  category     Category      @relation(fields: [categoryId], references: [id])
+  images       ItemImage[]
+  inquiries    Inquiry[]
+  favorites    Favorite[]
+  reservations Reservation[]
+  orderItems   OrderItem[]
+  ogImage      MediaAsset?   @relation("ItemOgImage", fields: [ogImageId], references: [id])
+  ogImageId    String?
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([price])
+  @@index([origin])
+  @@index([material])
+  @@index([maker])
+  @@index([yearFrom, yearTo])
+}
+
+model MediaAsset {
+  id              String          @id @default(uuid())
+  key             String          @unique
+  url             String
+  provider        StorageProvider @default(LOCAL)
+  kind            MediaKind       @default(IMAGE)
+  mimeType        String
+  width           Int?
+  height          Int?
+  sizeBytes       Int?
+  durationSeconds Int?
+  alt             String?
+  createdAt       DateTime        @default(now())
+
+  itemImages ItemImage[]
+  ogItems    Item[]          @relation("ItemOgImage")
+  stories    Story[]
+}
+
+model ItemImage {
+  id        String     @id @default(uuid())
+  itemId    String
+  assetId   String
+  sortOrder Int        @default(0)
+  isPrimary Boolean    @default(false)
+  createdAt DateTime   @default(now())
+
+  item  Item       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  asset MediaAsset @relation(fields: [assetId], references: [id])
+
+  @@unique([itemId, assetId])
+  @@index([itemId, sortOrder])
+}
+
+model Story {
+  id             String        @id @default(uuid())
+  slug           String        @unique
+  title          String
+  excerpt        String?
+  content        String
+  status         ContentStatus @default(DRAFT)
+  seoTitle       String?
+  seoDescription String?
+  publishedAt    DateTime?
+  coverImageId   String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  coverImage MediaAsset? @relation(fields: [coverImageId], references: [id])
+}
+
+model Inquiry {
+  id        String        @id @default(uuid())
+  itemId    String?
+  userId    String?
+  name      String
+  email     String
+  phone     String?
+  message   String
+  status    InquiryStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  item          Item?         @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  user          User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  reservations  Reservation[]
+  orders        Order[]
+
+  @@index([status])
+  @@index([email])
+  @@index([userId])
+}
+
+model ItemRequest {
+  id          String            @id @default(uuid())
+  userId      String?
+  name        String
+  email       String
+  phone       String?
+  description String
+  details     String?
+  status      ItemRequestStatus @default(NEW)
+  adminNotes  String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([userId])
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  itemId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemId])
+}
+
+model Reservation {
+  id                 String            @id @default(uuid())
+  itemId             String
+  inquiryId          String
+  userId             String?
+  createdByAdminId   String
+  cancelledByAdminId String?
+  confirmedByAdminId String?
+  status             ReservationStatus @default(ACTIVE)
+  customerName       String
+  customerEmail      String
+  customerPhone      String?
+  reservedAt         DateTime
+  reservedUntil      DateTime
+  cancelledAt        DateTime?
+  confirmedAt        DateTime?
+  expiredAt          DateTime?
+  notes              String?
+  fulfillmentMethod  FulfillmentMethod @default(PICKUP)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  item             Item     @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  inquiry          Inquiry  @relation(fields: [inquiryId], references: [id], onDelete: Restrict)
+  user             User?    @relation("ReservationCustomer", fields: [userId], references: [id], onDelete: SetNull)
+  createdByAdmin   User     @relation("ReservationCreatedBy", fields: [createdByAdminId], references: [id])
+  cancelledByAdmin User?    @relation("ReservationCancelledBy", fields: [cancelledByAdminId], references: [id])
+  confirmedByAdmin User?    @relation("ReservationConfirmedBy", fields: [confirmedByAdminId], references: [id])
+  order            Order?
+
+  @@index([status])
+  @@index([itemId, status])
+  @@index([reservedUntil])
+  @@index([userId])
+}
+
+model Order {
+  id                 String            @id @default(uuid())
+  orderNumber        String            @unique
+  userId             String?
+  reservationId      String?           @unique
+  inquiryId          String?
+  createdByAdminId   String?
+  reversedByAdminId  String?
+  status             OrderStatus       @default(PENDING)
+  customerName       String
+  email              String
+  phone              String?
+  city               String?
+  address            String?
+  notes              String?
+  fulfillmentMethod  FulfillmentMethod @default(PICKUP)
+  total              Decimal           @db.Decimal(12, 2)
+  currency           String            @default("MKD")
+  reversedAt         DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  user           User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdByAdmin User?        @relation("OrderCreatedBy", fields: [createdByAdminId], references: [id])
+  reversedByAdmin User?       @relation("OrderReversedBy", fields: [reversedByAdminId], references: [id])
+  reservation    Reservation? @relation(fields: [reservationId], references: [id])
+  inquiry        Inquiry?     @relation(fields: [inquiryId], references: [id], onDelete: SetNull)
+  items          OrderItem[]
+
+  @@index([status])
+  @@index([email])
+  @@index([userId])
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  itemId    String
+  title     String
+  reference String
+  price     Decimal @db.Decimal(12, 2)
+  currency  String  @default("MKD")
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  item  Item  @relation(fields: [itemId], references: [id])
+
+  @@unique([orderId, itemId])
+}
+
+model ReferenceCounter {
+  key        String @id
+  lastNumber Int    @default(0)
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
