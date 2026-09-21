@@ -1,29 +1,40 @@
 import { z } from "zod";
 
-const envSchema = z.object({
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  APP_URL: z.string().url(),
-  DATABASE_URL: z.string().min(1),
-  AUTH_SECRET: z.string().min(32, "AUTH_SECRET мора да има најмалку 32 знаци."),
-  BOOTSTRAP_ADMIN_EMAIL: z.string().email().optional(),
-  BOOTSTRAP_ADMIN_PASSWORD: z.string().min(10).optional(),
-  BOOTSTRAP_ADMIN_NAME: z.string().optional(),
-  STORAGE_PROVIDER: z.enum(["LOCAL", "S3", "R2"]).default("LOCAL"),
-  STORAGE_LOCAL_DIR: z.string().default("./storage"),
-  STORAGE_PUBLIC_BASE_URL: z.string().min(1).optional(),
-  AWS_S3_BUCKET: z.string().optional(),
-  AWS_S3_REGION: z.string().optional(),
-  AWS_ACCESS_KEY_ID: z.string().optional(),
-  AWS_SECRET_ACCESS_KEY: z.string().optional(),
-  R2_ACCOUNT_ID: z.string().optional(),
-  R2_BUCKET: z.string().optional(),
-  R2_ACCESS_KEY_ID: z.string().optional(),
-  R2_SECRET_ACCESS_KEY: z.string().optional(),
-  GOOGLE_CLIENT_ID: z.string().optional(),
-  GOOGLE_CLIENT_SECRET: z.string().optional(),
-  FACEBOOK_CLIENT_ID: z.string().optional(),
-  FACEBOOK_CLIENT_SECRET: z.string().optional(),
-});
+const envSchema = z
+  .object({
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    APP_URL: z.string().url(),
+    DATABASE_URL: z.string().min(1),
+    AUTH_SECRET: z.string().min(32, "AUTH_SECRET мора да има најмалку 32 знаци."),
+    BOOTSTRAP_ADMIN_EMAIL: z.string().email().optional(),
+    BOOTSTRAP_ADMIN_PASSWORD: z.string().min(10).optional(),
+    BOOTSTRAP_ADMIN_NAME: z.string().optional(),
+    STORAGE_PROVIDER: z.enum(["LOCAL", "S3", "R2", "BLOB"]).default("LOCAL"),
+    STORAGE_LOCAL_DIR: z.string().default("./storage"),
+    STORAGE_PUBLIC_BASE_URL: z.string().min(1).optional(),
+    BLOB_READ_WRITE_TOKEN: z.string().optional(),
+    AWS_S3_BUCKET: z.string().optional(),
+    AWS_S3_REGION: z.string().optional(),
+    AWS_ACCESS_KEY_ID: z.string().optional(),
+    AWS_SECRET_ACCESS_KEY: z.string().optional(),
+    R2_ACCOUNT_ID: z.string().optional(),
+    R2_BUCKET: z.string().optional(),
+    R2_ACCESS_KEY_ID: z.string().optional(),
+    R2_SECRET_ACCESS_KEY: z.string().optional(),
+    GOOGLE_CLIENT_ID: z.string().optional(),
+    GOOGLE_CLIENT_SECRET: z.string().optional(),
+    FACEBOOK_CLIENT_ID: z.string().optional(),
+    FACEBOOK_CLIENT_SECRET: z.string().optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.STORAGE_PROVIDER === "BLOB" && !value.BLOB_READ_WRITE_TOKEN?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["BLOB_READ_WRITE_TOKEN"],
+        message: "BLOB_READ_WRITE_TOKEN е задолжителен кога STORAGE_PROVIDER=BLOB.",
+      });
+    }
+  });
 
 export type Env = z.infer<typeof envSchema>;
 
@@ -39,6 +50,7 @@ function readEnv(): Env {
     STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
     STORAGE_LOCAL_DIR: process.env.STORAGE_LOCAL_DIR,
     STORAGE_PUBLIC_BASE_URL: process.env.STORAGE_PUBLIC_BASE_URL,
+    BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN || undefined,
     AWS_S3_BUCKET: process.env.AWS_S3_BUCKET,
     AWS_S3_REGION: process.env.AWS_S3_REGION,
     AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
