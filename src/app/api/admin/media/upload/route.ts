@@ -5,7 +5,7 @@ import { addItemMedia } from "@/server/services/item-image-service";
 
 export const runtime = "nodejs";
 
-/** Local large-file upload path (images ≤30MB, videos ≤200MB). Prefer this over Server Actions. */
+/** LOCAL multipart upload (images ≤30MB, videos ≤200MB). BLOB uses client upload instead. */
 export async function POST(request: Request) {
   try {
     await requireAdmin();

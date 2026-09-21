@@ -7,6 +7,7 @@ import { ItemImageManager } from "@/components/admin/ItemImageManager";
 import { ItemStatusActions } from "@/components/admin/ItemStatusActions";
 import { ActiveReservationActions, ReserveForm } from "@/components/admin/ReservationPanel";
 import { formatReservationRemaining, isReservationExpired } from "@/lib/domain/reservation-status";
+import { env } from "@/lib/env";
 import { findItemById, listCategories } from "@/server/repositories/item-repository";
 import {
   getActiveReservationForItem,
@@ -76,6 +77,7 @@ export default async function EditItemPage({ params }: { params: Promise<{ id: s
       <div className="mb-12">
         <ItemImageManager
           itemId={item.id}
+          uploadMode={env.STORAGE_PROVIDER === "BLOB" ? "blob" : "local"}
           images={item.images.map((image) => ({
             id: image.id,
             isPrimary: image.isPrimary,

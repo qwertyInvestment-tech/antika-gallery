@@ -14,7 +14,7 @@ import {
   findItemById,
   slugExists,
 } from "@/server/repositories/item-repository";
-import { getObjectStorage } from "@/lib/storage";
+import { getStorageForProvider } from "@/lib/storage";
 
 const PUBLIC_NEEDS_COPY: ItemStatus[] = [
   ItemStatus.PUBLISHED,
@@ -269,7 +269,11 @@ export async function deleteItem(id: string) {
     );
   }
 
-  const assetKeys = existing.images.map((image) => image.asset.key);
+  const storageTargets = existing.images.map((image) => ({
+    provider: image.asset.provider,
+    key: image.asset.key,
+    url: image.asset.url,
+  }));
   const assetIds = existing.images.map((image) => image.asset.id);
 
   await prisma.$transaction(async (tx) => {
@@ -282,9 +286,16 @@ export async function deleteItem(id: string) {
     await tx.item.delete({ where: { id } });
   });
 
-  const storage = getObjectStorage();
-  await Promise.all(assetKeys.map((key) => storage.delete(key).catch(() => undefined)));
-
+  await Promise.all(
+    storageTargets.map(async (asset) => {
+      try {
+        const storage = getStorageForProvider(asset.provider);
+        await storage.delete(asset.provider === "BLOB" ? asset.url : asset.key);
+      } catch {
+        // Best-effort cleanup after DB delete.
+      }
+    }),
+  );
   return { id };
 }
 

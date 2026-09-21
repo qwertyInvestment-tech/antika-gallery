@@ -23,6 +23,7 @@ const testFiles = [
   "tests/hardening.test.ts",
   "tests/admin-media-v2.test.ts",
   "tests/social-login.test.ts",
+  "tests/blob-storage.test.ts",
 ];
 
 const child = spawn("npx", ["tsx", "--env-file", envFile, "--test", ...testFiles], {

@@ -26,11 +26,11 @@ Names / placeholders only. Never commit real secrets.
 | `APP_URL` | Public origin, e.g. `https://example.com` — **do not leave localhost** |
 | `DATABASE_URL` | Managed PostgreSQL connection string |
 | `AUTH_SECRET` | HMAC key, ≥ 32 random characters. **Not** the `.env.example` placeholder |
-| `STORAGE_PROVIDER` | `LOCAL` for development; `S3` or `R2` for production |
+| `STORAGE_PROVIDER` | `LOCAL` for development; `BLOB` for Vercel production (`S3`/`R2` reserved, not wired) |
 | `STORAGE_LOCAL_DIR` | Development only (`./storage`) |
-| `STORAGE_PUBLIC_BASE_URL` | Public media base URL (CDN or origin `/api/media`) |
-| `AWS_S3_BUCKET`, `AWS_S3_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | When `STORAGE_PROVIDER=S3` |
-| `R2_ACCOUNT_ID`, `R2_BUCKET`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | When `STORAGE_PROVIDER=R2` |
+| `STORAGE_PUBLIC_BASE_URL` | LOCAL media base (`/api/media`) |
+| `BLOB_READ_WRITE_TOKEN` | Required when `STORAGE_PROVIDER=BLOB`. Set in Vercel Environment Variables |
+| `AWS_S3_*` / `R2_*` | Reserved for a later adapter; unused today |
 | `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD`, `BOOTSTRAP_ADMIN_NAME` | Seed / bootstrap only. Do **not** run seed automatically in production |
 
 `.env` is gitignored. `.env.example` contains placeholders only.
@@ -48,7 +48,7 @@ Partial unique index `Reservation_item_active_unique` (one ACTIVE reservation pe
 
 **Development:** `STORAGE_PROVIDER=LOCAL`, files under `./storage` (gitignored), served via `/api/media`.
 
-**Production:** configure S3-compatible storage (R2/S3). Do not store catalog images in Git. Uploads validate MIME type, size (8 MB), and magic bytes (JPEG/PNG/WebP). The S3/R2 adapter is not implemented yet; production launch requires wiring `getObjectStorage()` before serving real media at scale.
+**Production (Vercel):** `STORAGE_PROVIDER=BLOB` with `BLOB_READ_WRITE_TOKEN` from a Vercel Blob store. Admin uploads go browser → Vercel Blob (client upload token), then MediaAsset metadata is saved in Postgres. Public pages use the absolute Blob URL. S3/R2 adapters remain unimplemented.
 
 ## E. Authentication
 
@@ -114,7 +114,7 @@ Server Actions must percent-encode Macedonian paths before `redirect()`, because
 ## L. Known product gaps (not Phase 7 work)
 
 - Password reset
-- S3/R2 storage adapter implementation
+- S3/R2 storage adapter implementation (BLOB is the production path on Vercel)
 - Distributed rate limiting
 - Email delivery
 - Payments / shipping (out of scope)

@@ -74,6 +74,7 @@ enum StorageProvider {
   LOCAL
   S3
   R2
+  BLOB
 }
 
 enum SocialProvider {

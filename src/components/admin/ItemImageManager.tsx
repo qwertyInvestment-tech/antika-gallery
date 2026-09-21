@@ -1,6 +1,7 @@
 "use client";
 
 import { MediaKind } from "@prisma/client";
+import { upload as uploadToBlob } from "@vercel/blob/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
@@ -25,7 +26,17 @@ type MediaRow = {
   };
 };
 
-export function ItemImageManager({ itemId, images }: { itemId: string; images: MediaRow[] }) {
+type UploadMode = "local" | "blob";
+
+export function ItemImageManager({
+  itemId,
+  images,
+  uploadMode = "local",
+}: {
+  itemId: string;
+  images: MediaRow[];
+  uploadMode?: UploadMode;
+}) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -39,17 +50,87 @@ export function ItemImageManager({ itemId, images }: { itemId: string; images: M
     if (next.ok) router.refresh();
   }
 
+  async function uploadLocal(formData: FormData) {
+    formData.set("itemId", itemId);
+    const response = await fetch("/api/admin/media/upload", {
+      method: "POST",
+      body: formData,
+    });
+    return (await response.json()) as { ok: boolean; message?: string };
+  }
+
+  async function uploadBlob(file: File, alt: string) {
+    const prepareResponse = await fetch("/api/admin/media/prepare", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        itemId,
+        mimeType: file.type,
+        sizeBytes: file.size,
+      }),
+    });
+    const prepared = (await prepareResponse.json()) as {
+      ok: boolean;
+      message?: string;
+      mode?: UploadMode;
+      pathname?: string;
+      handleUploadUrl?: string;
+    };
+    if (!prepared.ok) {
+      return { ok: false, message: prepared.message ?? "Грешка при прикачување." };
+    }
+    if (prepared.mode !== "blob" || !prepared.pathname || !prepared.handleUploadUrl) {
+      return uploadLocal(
+        (() => {
+          const formData = new FormData();
+          formData.set("file", file);
+          formData.set("alt", alt);
+          return formData;
+        })(),
+      );
+    }
+
+    const blob = await uploadToBlob(prepared.pathname, file, {
+      access: "public",
+      handleUploadUrl: prepared.handleUploadUrl,
+      multipart: file.size > 4.5 * 1024 * 1024,
+      clientPayload: JSON.stringify({
+        itemId,
+        alt,
+        mimeType: file.type,
+        sizeBytes: file.size,
+      }),
+    });
+
+    const completeResponse = await fetch("/api/admin/media/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        itemId,
+        key: prepared.pathname,
+        url: blob.url,
+        mimeType: file.type,
+        sizeBytes: file.size,
+        alt,
+      }),
+    });
+    return (await completeResponse.json()) as { ok: boolean; message?: string };
+  }
+
   async function upload(formData: FormData) {
     if (uploading) return;
     setUploading(true);
     setMessage(null);
     try {
-      formData.set("itemId", itemId);
-      const response = await fetch("/api/admin/media/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const payload = (await response.json()) as { ok: boolean; message?: string };
+      const file = formData.get("file");
+      const alt = String(formData.get("alt") ?? "");
+      if (!(file instanceof File) || file.size === 0) {
+        setMessage("Изберете датотека.");
+        return;
+      }
+
+      const payload =
+        uploadMode === "blob" ? await uploadBlob(file, alt) : await uploadLocal(formData);
       setMessage(payload.ok ? "Медиумот е додаден." : payload.message ?? "Грешка при прикачување.");
       if (payload.ok) router.refresh();
     } catch {

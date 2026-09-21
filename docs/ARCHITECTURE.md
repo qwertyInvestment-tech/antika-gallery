@@ -45,7 +45,7 @@ Auth.js (next-auth v5) не е вклучен: сè уште е на beta кан
 
 ## Медиуми
 
-`MediaAsset` + `STORAGE_PROVIDER` (`LOCAL` | `S3` | `R2`). Локалниот адаптер е активен. Облак адаптерите се врзуваат без промена на шемата.
+`MediaAsset` + `STORAGE_PROVIDER` (`LOCAL` | `BLOB` | `S3` | `R2`). `LOCAL` и `BLOB` (Vercel Blob client upload) се активни. S3/R2 остануваат резервирани.
 
 ## Јавни URL-и
 

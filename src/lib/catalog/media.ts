@@ -15,11 +15,11 @@ export function mediaPathFromKey(key: string) {
 }
 
 /**
- * Resolve stored MediaAsset.url / storage keys to a same-origin path.
+ * Resolve stored MediaAsset.url / storage keys to a browser-usable src.
  * LOCAL files are served by `/api/media/[...key]`. Absolute localhost or
  * `/media/...` URLs from older records are rewritten so the origin/port
  * of the running server does not matter (Vercel, reverse proxy, :3006).
- * External CDN URLs are left unchanged.
+ * External CDN / Vercel Blob HTTPS URLs are left unchanged.
  */
 export function toPublicImageSrc(url: string | null | undefined) {
   if (!url) return null;
