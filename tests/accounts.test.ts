@@ -3,7 +3,7 @@ import { after, test } from "node:test";
 import { ItemStatus, UserRole } from "@prisma/client";
 import { prisma } from "../src/lib/db/prisma";
 import { ensureAdmin } from "../src/lib/auth/admin";
-import { verifyPassword } from "../src/lib/auth/password";
+import { hashPassword, verifyPassword } from "../src/lib/auth/password";
 import { verifySessionToken, signSessionToken } from "../src/lib/auth/session-token";
 import { AppError } from "../src/lib/errors";
 import { authenticateUser, registerCustomer } from "../src/server/services/account-service";
@@ -166,19 +166,39 @@ test("непостоечка сметка се одбива", async () => {
 });
 
 test("ADMIN и SUPER_ADMIN најава останува валидна", async () => {
-  const password = process.env.BOOTSTRAP_ADMIN_PASSWORD ?? "change-me-now";
-  const superAdmin = await prisma.user.findFirst({ where: { role: UserRole.SUPER_ADMIN } });
-  assert.ok(superAdmin);
+  const password = "sigurnalozinka";
+  const stamp = Date.now();
+  const passwordHash = await hashPassword(password);
+
+  const superAdmin = await prisma.user.create({
+    data: {
+      name: "Test Super Admin",
+      email: `p6super${stamp}@example.com`,
+      passwordHash,
+      role: UserRole.SUPER_ADMIN,
+    },
+  });
+  const admin = await prisma.user.create({
+    data: {
+      name: "Test Admin",
+      email: `p6admin${stamp}@example.com`,
+      passwordHash,
+      role: UserRole.ADMIN,
+    },
+  });
+  createdUserIds.push(superAdmin.id, admin.id);
+
   const superSession = await authenticateUser({
     email: superAdmin.email,
     password,
   });
   assert.equal(superSession.role, UserRole.SUPER_ADMIN);
-  const admin = await prisma.user.findFirst({ where: { role: UserRole.ADMIN } });
-  if (admin) {
-    const session = await authenticateUser({ email: admin.email, password });
-    assert.equal(session.role, UserRole.ADMIN);
-  }
+
+  const adminSession = await authenticateUser({
+    email: admin.email,
+    password,
+  });
+  assert.equal(adminSession.role, UserRole.ADMIN);
 });
 
 test("CUSTOMER нема admin пристап", async () => {
