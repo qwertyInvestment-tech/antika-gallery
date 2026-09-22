@@ -9,15 +9,20 @@ export function CatalogGrid({ items }: { items: Preview[] }) {
   const [first, ...rest] = items;
 
   return (
-    <div className="space-y-16 md:space-y-24">
+    <div className="space-y-20 md:space-y-28">
       <ItemPreview {...first} featured />
 
       {rest.length > 0 ? (
-        <div className="grid gap-x-8 gap-y-14 md:grid-cols-12 md:gap-y-20">
+        <div className="grid gap-y-16 md:grid-cols-12 md:gap-x-8 md:gap-y-24">
           {rest.map((item, index) => {
-            const wide = index % 5 === 0 || index % 5 === 3;
+            const pattern = index % 5;
+            const wide = pattern === 0 || pattern === 3;
+            const offset = pattern === 2;
             return (
-              <div key={item.id} className={wide ? "md:col-span-7" : "md:col-span-5"}>
+              <div
+                key={item.id}
+                className={`${wide ? "md:col-span-7" : "md:col-span-5"} ${offset ? "md:col-start-2" : ""}`}
+              >
                 <ItemPreview {...item} />
               </div>
             );

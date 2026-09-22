@@ -1,28 +1,28 @@
-import { WantedRequestForm } from "@/components/customer/WantedRequestForm";
-import { getSessionUser } from "@/lib/auth/session";
-import { getPublicAccount } from "@/server/services/account-service";
 import { Container } from "@/components/ui/Container";
-import { Section } from "@/components/ui/Section";
+import { LinkButton } from "@/components/ui/LinkButton";
+import { publicPaths } from "@/lib/i18n/routes";
 
-export async function WantedObject() {
-  const session = await getSessionUser();
-  const account = session ? await getPublicAccount(session.id) : null;
+/** Concierge band — CTA only; form lives on /побарај-предмет. */
+export function WantedObject() {
   return (
-    <Section tone="walnut" className="py-24 md:py-32">
-      <Container width="narrow" className="text-center">
-        <p className="text-[0.72rem] tracking-[0.28em] uppercase text-ivory-soft/50">Побарај предмет</p>
-        <h2 className="mt-6 font-serif text-4xl leading-tight md:text-6xl">Барате нешто посебно?</h2>
-        <p className="mx-auto mt-8 max-w-lg text-base leading-8 text-ivory-soft/70">
-          Кажете ни што барате. Можеби следниот предмет во вашата колекција веќе постои — само треба да го
-          пронајдеме.
+    <section className="bg-ink py-28 text-ivory-soft md:min-h-[min(70vh,36rem)] md:py-36 lg:py-40">
+      <Container width="wide" className="text-center lg:px-12">
+        <p className="text-[0.72rem] tracking-[0.32em] uppercase text-ivory-soft/45">Приватна аквизиција</p>
+        <h2 className="mx-auto mt-8 max-w-4xl font-serif text-[clamp(2.75rem,7vw,6rem)] font-medium leading-[0.94]">
+          Барате нешто посебно?
+        </h2>
+        <p className="mx-auto mt-8 max-w-lg text-[1.05rem] leading-8 text-ivory-soft/60">
+          Не го најдовте предметот што го барате? Кажете ни што барате. Ќе го побараме за вас.
         </p>
-        <div className="mx-auto mt-10 max-w-lg text-left">
-          <WantedRequestForm
-            invert
-            identity={account ? { name: account.name, email: account.email, phone: account.phone } : null}
-          />
+        <div className="mt-12">
+          <LinkButton
+            href={publicPaths.requestItem}
+            className="border-ivory-soft/40 bg-transparent text-ivory-soft hover:border-ivory-soft hover:bg-ivory-soft/10"
+          >
+            Побарај предмет
+          </LinkButton>
         </div>
       </Container>
-    </Section>
+    </section>
   );
 }

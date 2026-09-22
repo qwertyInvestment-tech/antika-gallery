@@ -80,6 +80,16 @@ export async function getCategoryItems(categorySlug: string) {
 
 export async function getFeaturedItems(take = 1) {
   await refreshExpiredReservations();
+  const withImages = await prisma.item.findMany({
+    where: {
+      status: ItemStatus.AVAILABLE,
+      images: { some: { asset: { kind: MediaKind.IMAGE } } },
+    },
+    include: publicDetailInclude,
+    orderBy: { publishedAt: "desc" },
+    take,
+  });
+  if (withImages.length > 0) return withImages;
   return prisma.item.findMany({
     where: { status: ItemStatus.AVAILABLE },
     include: publicDetailInclude,
@@ -89,6 +99,16 @@ export async function getFeaturedItems(take = 1) {
 }
 
 export async function getRecentPublicItems(take = 3) {
+  const withImages = await prisma.item.findMany({
+    where: {
+      status: { in: [...PUBLIC_ITEM_STATUSES] },
+      images: { some: { asset: { kind: MediaKind.IMAGE } } },
+    },
+    include: publicListInclude,
+    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    take,
+  });
+  if (withImages.length >= take) return withImages;
   return prisma.item.findMany({
     where: { status: { in: [...PUBLIC_ITEM_STATUSES] } },
     include: publicListInclude,

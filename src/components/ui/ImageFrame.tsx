@@ -27,7 +27,7 @@ export function ImageFrame({
             fill
             sizes={sizes}
             priority={priority}
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.035]"
+            className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.02]"
           />
         ) : (
           <div className="flex h-full min-h-48 items-center justify-center px-6 text-center text-[0.72rem] tracking-[0.18em] uppercase text-muted">

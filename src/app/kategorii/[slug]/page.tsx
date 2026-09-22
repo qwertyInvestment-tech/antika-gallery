@@ -44,18 +44,18 @@ export default async function CategoryDetailPage({
     <SiteShell>
       <Container width="wide" className="py-16 md:py-24">
         <p className="text-[0.72rem] tracking-[0.28em] uppercase text-muted">Категорија</p>
-        <h1 className="mt-4 font-serif text-5xl leading-tight md:text-6xl">{category.name}</h1>
+        <h1 className="mt-5 font-serif text-5xl leading-tight md:text-6xl">{category.name}</h1>
         {category.description ? (
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">{category.description}</p>
+          <p className="mt-7 max-w-2xl text-lg leading-8 text-muted">{category.description}</p>
         ) : null}
-        <p className="mt-4 text-sm text-muted">
+        <p className="mt-5 text-sm text-muted">
           {result.total === 0 ? "Нема јавни предмети" : result.total === 1 ? "Еден предмет" : `${result.total} предмети`}
         </p>
         <LinkButton href={publicPaths.collection} variant="ghost" className="mt-6 px-0">
           Целата колекција
         </LinkButton>
 
-        <div className="mt-14">
+        <div className="mt-16">
           {result.items.length === 0 ? (
             <CatalogEmpty title="Во оваа категорија моментално нема предмети." />
           ) : (

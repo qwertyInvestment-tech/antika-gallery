@@ -9,6 +9,7 @@ function rewritePath(pathname: string) {
   if (exact) return exact.destination;
   if (pathname.startsWith("/категории/")) return `/kategorii/${pathname.slice("/категории/".length)}`;
   if (pathname.startsWith("/предмет/")) return `/predmet/${pathname.slice("/предмет/".length)}`;
+  if (pathname.startsWith("/приказни/")) return `/prikazni/${pathname.slice("/приказни/".length)}`;
   if (pathname.startsWith("/моите-нарачки/")) {
     return `/moite-naracki/${pathname.slice("/моите-нарачки/".length)}`;
   }

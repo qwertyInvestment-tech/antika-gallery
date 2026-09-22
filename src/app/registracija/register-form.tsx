@@ -7,7 +7,7 @@ import { registerAction, type ActionResult } from "@/server/actions/auth";
 import { publicPaths } from "@/lib/i18n/routes";
 
 const initial: ActionResult | null = null;
-const field = "border border-ink/20 bg-ivory-soft px-3 py-2 text-base outline-none focus:border-ink";
+const field = "antika-field";
 
 export function RegisterForm() {
   const [state, formAction, pending] = useActionState(registerAction, initial);

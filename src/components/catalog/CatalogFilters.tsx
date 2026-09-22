@@ -25,7 +25,7 @@ export function CatalogFilters({
             name="q"
             defaultValue={filters.q ?? ""}
             placeholder="Назив, ANT-000001, автор…"
-            className="mt-2 w-full border border-ink/15 bg-ivory-soft px-3 py-2.5"
+            className="antika-field"
           />
         </label>
         <label className="block text-sm md:col-span-3">
@@ -33,7 +33,7 @@ export function CatalogFilters({
           <select
             name="категорија"
             defaultValue={filters.categorySlug ?? ""}
-            className="mt-2 w-full border border-ink/15 bg-ivory-soft px-3 py-2.5"
+            className="antika-field"
           >
             <option value="">Сите</option>
             {categories.map((category) => (
@@ -48,7 +48,7 @@ export function CatalogFilters({
           <select
             name="статус"
             defaultValue={filters.status ?? ""}
-            className="mt-2 w-full border border-ink/15 bg-ivory-soft px-3 py-2.5"
+            className="antika-field"
           >
             <option value="">Сите видливи</option>
             {PUBLIC_FILTER_STATUSES.map((status) => (
@@ -63,7 +63,7 @@ export function CatalogFilters({
           <select
             name="сортирај"
             defaultValue={filters.sort}
-            className="mt-2 w-full border border-ink/15 bg-ivory-soft px-3 py-2.5"
+            className="antika-field"
           >
             <option value="newest">Најнови</option>
             <option value="price-asc">Цена — растечки</option>
@@ -79,25 +79,25 @@ export function CatalogFilters({
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <label className="block text-sm">
             <span className="text-[0.68rem] tracking-[0.18em] uppercase text-muted">Цена од</span>
-            <input name="цена-од" defaultValue={filters.minPrice ?? ""} inputMode="decimal" className="mt-2 w-full border border-ink/15 bg-ivory-soft px-3 py-2.5" />
+            <input name="цена-од" defaultValue={filters.minPrice ?? ""} inputMode="decimal" className="antika-field" />
           </label>
           <label className="block text-sm">
             <span className="text-[0.68rem] tracking-[0.18em] uppercase text-muted">Цена до</span>
-            <input name="цена-до" defaultValue={filters.maxPrice ?? ""} inputMode="decimal" className="mt-2 w-full border border-ink/15 bg-ivory-soft px-3 py-2.5" />
+            <input name="цена-до" defaultValue={filters.maxPrice ?? ""} inputMode="decimal" className="antika-field" />
           </label>
           {showExtended ? (
             <>
               <label className="block text-sm">
                 <span className="text-[0.68rem] tracking-[0.18em] uppercase text-muted">Период</span>
-                <input name="период" defaultValue={filters.period ?? ""} className="mt-2 w-full border border-ink/15 bg-ivory-soft px-3 py-2.5" />
+                <input name="период" defaultValue={filters.period ?? ""} className="antika-field" />
               </label>
               <label className="block text-sm">
                 <span className="text-[0.68rem] tracking-[0.18em] uppercase text-muted">Потекло</span>
-                <input name="потекло" defaultValue={filters.origin ?? ""} className="mt-2 w-full border border-ink/15 bg-ivory-soft px-3 py-2.5" />
+                <input name="потекло" defaultValue={filters.origin ?? ""} className="antika-field" />
               </label>
               <label className="block text-sm">
                 <span className="text-[0.68rem] tracking-[0.18em] uppercase text-muted">Материјал</span>
-                <input name="материјал" defaultValue={filters.material ?? ""} className="mt-2 w-full border border-ink/15 bg-ivory-soft px-3 py-2.5" />
+                <input name="материјал" defaultValue={filters.material ?? ""} className="antika-field" />
               </label>
             </>
           ) : null}

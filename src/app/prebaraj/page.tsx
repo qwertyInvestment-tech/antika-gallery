@@ -32,14 +32,14 @@ export default async function SearchPage({
     <SiteShell>
       <Container width="wide" className="py-16 md:py-24">
         <p className="text-[0.72rem] tracking-[0.28em] uppercase text-muted">Пребарај</p>
-        <h1 className="mt-4 font-serif text-5xl">Најдете еден предмет.</h1>
-        <p className="mt-5 max-w-xl text-lg leading-8 text-muted">
+        <h1 className="mt-5 font-serif text-5xl md:text-6xl">Најдете еден предмет.</h1>
+        <p className="mt-7 max-w-xl text-lg leading-8 text-muted">
           Пребарувањето се извршува на серверот — по назив, референтен број, автор, потекло и период.
         </p>
-        <div className="mt-10">
+        <div className="mt-12">
           <CatalogFilters action={publicPaths.search} categories={categories} filters={filters} showExtended={false} />
         </div>
-        <div className="mt-14">
+        <div className="mt-16">
           {!filters.q ? (
             <p className="text-muted">Внесете назив или ANT-референца.</p>
           ) : result && result.items.length === 0 ? (

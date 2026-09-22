@@ -28,7 +28,7 @@ export function LoginForm({ next, error }: { next?: string; error?: string }) {
           type="email"
           autoComplete="email"
           required
-          className="border border-ink/20 bg-ivory-soft px-3 py-2 text-base outline-none focus:border-ink"
+          className="antika-field"
         />
       </label>
       <label className="flex flex-col gap-2 text-sm">
@@ -38,7 +38,7 @@ export function LoginForm({ next, error }: { next?: string; error?: string }) {
           type="password"
           autoComplete="current-password"
           required
-          className="border border-ink/20 bg-ivory-soft px-3 py-2 text-base outline-none focus:border-ink"
+          className="antika-field"
         />
       </label>
       {oauthMessage ? <p className="text-sm text-walnut">{oauthMessage}</p> : null}

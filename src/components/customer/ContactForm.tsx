@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { Button } from "@/components/ui/Button";
 import { submitContactAction, type FormActionResult } from "@/server/actions/customer";
 
-const fieldClass = "mt-1 w-full border border-ink/15 bg-ivory-soft px-3 py-2.5 text-sm";
+const fieldClass = "antika-field";
 
 export function ContactForm() {
   const [state, action, pending] = useActionState<FormActionResult | null, FormData>(

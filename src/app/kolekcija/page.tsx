@@ -33,19 +33,22 @@ export default async function CollectionPage({
     <SiteShell>
       <Container width="wide" className="py-16 md:py-24">
         <p className="text-[0.72rem] tracking-[0.28em] uppercase text-muted">Колекција</p>
-        <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-[0.95] md:text-6xl">Предмети, не залиха.</h1>
-        <p className="mt-6 max-w-xl text-lg leading-8 text-muted">
-          Секој запис е еден конкретен физички предмет. Разгледувајте ги како галерија — бавно, со простор околу фотографијата.
+        <h1 className="mt-5 max-w-4xl font-serif text-[clamp(2.75rem,7vw,6.5rem)] font-medium leading-[0.92]">
+          Избрани предмети.
+        </h1>
+        <p className="mt-8 max-w-xl text-lg leading-8 text-muted">
+          Избрани предмети од различни периоди, места и приказни. Разгледувајте ги како галерија — бавно, со простор
+          околу фотографијата.
         </p>
 
-        <div className="mt-12">
+        <div className="mt-14">
           <CategoryNav categories={categories} activeSlug={filters.categorySlug} />
         </div>
-        <div className="mt-8">
+        <div className="mt-10">
           <CatalogFilters action={publicPaths.collection} categories={categories} filters={filters} />
         </div>
 
-        <div className="mt-14">
+        <div className="mt-16">
           {result.items.length === 0 ? (
             <CatalogEmpty
               title={filters.q ? "Нема предмети што одговараат на пребарувањето." : "Во оваа збирка моментално нема предмети."}

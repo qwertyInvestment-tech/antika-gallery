@@ -43,7 +43,7 @@ body::before {
   pointer-events: none;
   position: fixed;
   inset: 0;
-  z-index: 80;
+  z-index: 1;
   opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -56,4 +56,114 @@ body::before {
 :focus-visible {
   outline: 1px solid var(--walnut);
   outline-offset: 3px;
+}
+
+/* Shared public form field — quiet, catalogue-like */
+.antika-field {
+  margin-top: 0.35rem;
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  background: var(--ivory-soft);
+  padding: 0.7rem 0.85rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.antika-field:hover {
+  border-color: color-mix(in srgb, var(--ink) 28%, transparent);
+}
+
+.antika-field:focus {
+  outline: none;
+  border-color: var(--walnut);
+  background: #faf6ef;
+}
+
+.antika-nav-link {
+  position: relative;
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
+  transition: color 0.3s ease;
+}
+
+.antika-nav-link:hover,
+.antika-nav-link[aria-current="page"] {
+  color: var(--ink);
+}
+
+.antika-nav-link[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.45rem;
+  height: 1px;
+  background: var(--walnut);
+}
+
+/* Mobile navigation — portaled above page content (not above grain only) */
+.antika-mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  isolation: isolate;
+}
+
+.antika-mobile-menu__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--ink) 42%, transparent);
+  cursor: default;
+}
+
+.antika-mobile-menu__panel {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  background: var(--ivory);
+}
+
+body.antika-menu-open #содржина {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Hero — quiet reveal (no animation libraries) */
+@keyframes antika-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.85rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes antika-image-in {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.antika-hero-copy {
+  animation: antika-fade-up 0.7s ease-out both;
+}
+
+.antika-hero-media {
+  animation: antika-image-in 0.85s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .antika-hero-copy,
+  .antika-hero-media {
+    animation: none;
+  }
 }

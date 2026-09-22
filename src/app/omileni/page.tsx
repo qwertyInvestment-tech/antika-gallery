@@ -23,12 +23,12 @@ export default async function FavoritesPage() {
     <SiteShell>
       <Container width="wide" className="py-16 md:py-24">
         <p className="text-[0.72rem] tracking-[0.28em] uppercase text-muted">Омилени</p>
-        <h1 className="mt-4 font-serif text-5xl">Зачувани предмети</h1>
-        <p className="mt-5 max-w-xl text-lg leading-8 text-muted">
+        <h1 className="mt-5 font-serif text-5xl md:text-6xl">Зачувани предмети</h1>
+        <p className="mt-7 max-w-xl text-lg leading-8 text-muted">
           Предметите што ги зачувате остануваат тука, дури и ако подоцна бидат продадени.
         </p>
         {user ? <CustomerNav /> : null}
-        <div className="mt-12">
+        <div className="mt-14">
           {items ? (
             items.length === 0 ? (
               <CatalogEmpty

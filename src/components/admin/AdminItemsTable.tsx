@@ -103,7 +103,50 @@ export function AdminItemsTable({ items }: { items: AdminItemRow[] }) {
         {message ? <p className="basis-full text-sm text-walnut">{message}</p> : null}
       </div>
 
-      <div className="overflow-x-auto">
+      <ul className="space-y-4 md:hidden">
+        {items.map((item) => {
+          const src = toPublicImageSrc(item.photoUrl);
+          return (
+            <li key={item.id} className="border border-line p-4">
+              <div className="flex gap-4">
+                <div className="shrink-0">
+                  {src ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={src} alt={item.photoAlt} className="h-20 w-20 object-cover" />
+                  ) : (
+                    <span className="text-muted">—</span>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1 space-y-2 text-sm">
+                  <div className="flex items-start gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(item.id)}
+                      onChange={() => toggle(item.id)}
+                      aria-label={`Избери ${item.referenceNumber}`}
+                    />
+                    <div>
+                      <p className="text-[0.68rem] uppercase tracking-wider text-muted">{item.referenceNumber}</p>
+                      <Link href={`/admin/items/${item.id}`} className="font-medium underline underline-offset-4">
+                        {item.title}
+                      </Link>
+                    </div>
+                  </div>
+                  <p className="text-muted">
+                    {item.categoryName} · {item.price} {item.currency}
+                  </p>
+                  <p className="text-muted">
+                    {itemStatusLabels[item.status]} · {item.createdAtLabel}
+                  </p>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+        {items.length === 0 ? <li className="text-muted">Нема предмети за овој филтер.</li> : null}
+      </ul>
+
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[52rem] text-left text-sm">
           <thead className="text-[0.68rem] uppercase tracking-wider text-muted">
             <tr>

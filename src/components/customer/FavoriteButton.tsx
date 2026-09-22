@@ -61,7 +61,7 @@ export function FavoriteButton({
       onClick={() => void toggle()}
       aria-pressed={pressed}
       aria-label={pressed ? "Отстрани од омилени" : "Додај во омилени"}
-      className="mt-6 text-[0.72rem] tracking-[0.16em] uppercase text-walnut hover:text-ink"
+      className="mt-8 inline-flex min-h-11 items-center text-[0.72rem] tracking-[0.16em] uppercase text-walnut transition-colors duration-300 hover:text-ink"
     >
       {pressed ? "♥ Во омилени" : "♡ Додај во омилени"}
     </button>

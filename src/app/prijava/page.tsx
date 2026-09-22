@@ -29,8 +29,8 @@ export default async function LoginPage({
     <SiteShell>
       <Container width="narrow" className="py-24 md:py-32">
         <p className="text-[0.72rem] tracking-[0.28em] uppercase text-muted">ANTIKA</p>
-        <h1 className="mt-6 font-serif text-5xl tracking-tight">Најава</h1>
-        <p className="mt-4 max-w-md text-muted">Најавете се за да ги видите омилените, нарачките и резервациите.</p>
+        <h1 className="mt-5 font-serif text-5xl tracking-tight">Најава</h1>
+        <p className="mt-5 max-w-md text-muted">Најавете се за да ги видите омилените, нарачките и резервациите.</p>
         <LoginForm next={next} error={error} />
         <div className="mt-2 max-w-sm">
           <SocialAuthButtons mode="login" next={next} />

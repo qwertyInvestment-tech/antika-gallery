@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { Button } from "@/components/ui/Button";
 import { submitItemInquiryAction, type FormActionResult } from "@/server/actions/customer";
 
-const fieldClass = "mt-1 w-full border border-ink/15 bg-ivory-soft px-3 py-2.5 text-sm";
+const fieldClass = "antika-field";
 
 export function ItemInquiryForm({
   itemId,
@@ -24,7 +24,7 @@ export function ItemInquiryForm({
 
   if (state?.ok) {
     return (
-      <div className="mt-10 border border-line p-5">
+      <div className="mt-10 border-y border-line py-8">
         <p className="font-serif text-2xl">Вашето барање е испратено.</p>
         <p className="mt-3 text-sm leading-7 text-muted">Ќе ве контактираме во најкраток можен рок.</p>
       </div>
@@ -32,8 +32,8 @@ export function ItemInquiryForm({
   }
 
   return (
-    <form action={action} className="mt-10 space-y-4 border border-line p-5">
-      <h2 className="font-serif text-2xl">Заинтересиран сум за овој предмет</h2>
+    <form action={action} className="mt-10 space-y-5 border-y border-line py-8">
+      <h2 className="font-serif text-2xl leading-tight">Заинтересиран сум за овој предмет</h2>
       <p className="text-sm text-muted">
         {title} · {reference}
       </p>

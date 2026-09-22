@@ -80,9 +80,9 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
   return (
     <SiteShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemJsonLd(item)) }} />
-      <Container width="wide" className="py-12 md:py-20">
-        <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-7">
+      <Container width="wide" className="py-12 md:py-16 lg:py-20">
+        <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-20">
+          <div className="lg:col-span-7 xl:col-span-8">
             <ItemGallery images={galleryImages} title={item.title} />
             {videos.length > 0 ? (
               <section className="mt-8 space-y-4">
@@ -101,26 +101,32 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
               </section>
             ) : null}
           </div>
-          <div className="lg:col-span-5 lg:sticky lg:top-28">
-            <p className="text-[0.72rem] tracking-[0.22em] uppercase text-muted">{item.referenceNumber}</p>
+          <div className="lg:col-span-5 lg:sticky lg:top-32 xl:col-span-4">
+            <NextLink
+              href={categoryPath(item.category.slug)}
+              className="text-[0.68rem] tracking-[0.2em] uppercase text-muted transition-opacity duration-300 hover:opacity-70"
+            >
+              {item.category.name}
+            </NextLink>
             <h1 className="mt-4 font-serif text-4xl leading-tight md:text-5xl">{item.title}</h1>
-            <div className="mt-5">
+            <p className="mt-5 text-[0.72rem] tracking-[0.22em] uppercase text-muted">{item.referenceNumber}</p>
+            <div className="mt-4">
               <Badge tone={publicStatusTone(item.status)}>{publicStatusLabel(item.status)}</Badge>
             </div>
-            <p className="mt-6 font-serif text-3xl">{formatItemPrice(item.price, item.currency)}</p>
+            <p className="mt-7 font-serif text-3xl tracking-tight">{formatItemPrice(item.price, item.currency)}</p>
             {itemMetaLine(item) ? <p className="mt-3 text-sm tracking-wide text-muted">{itemMetaLine(item)}</p> : null}
             {item.shortDescription ? (
               <p className="mt-8 text-[1.05rem] leading-8 text-charcoal/85">{item.shortDescription}</p>
             ) : null}
 
             {item.status === ItemStatus.SOLD ? (
-              <p className="mt-8 border border-line px-4 py-3 text-[0.72rem] tracking-[0.18em] uppercase text-muted">
-                Продадено — предметот останува во архивата на колекцијата.
+              <p className="mt-10 border-y border-line py-5 text-[0.72rem] tracking-[0.18em] uppercase text-muted">
+                Продадено — архивски предмет во колекцијата.
               </p>
             ) : null}
             {item.status === ItemStatus.RESERVED ? (
-              <p className="mt-8 border border-line px-4 py-3 text-[0.72rem] tracking-[0.18em] uppercase text-muted">
-                Предметот е резервиран
+              <p className="mt-10 border-y border-line py-5 text-[0.72rem] tracking-[0.18em] uppercase text-muted">
+                Резервирано — предметот моментално не е достапен.
               </p>
             ) : null}
             {isPurchasableStatus(item.status) ? (
@@ -141,22 +147,15 @@ export default async function ItemPage({ params }: { params: Promise<{ slug: str
               authenticated={Boolean(session)}
               initiallySaved={favoriteIds.includes(item.id)}
             />
-
-            <NextLink
-              href={categoryPath(item.category.slug)}
-              className="mt-8 block text-[0.72rem] tracking-[0.16em] uppercase text-muted hover:text-ink"
-            >
-              {item.category.name}
-            </NextLink>
           </div>
         </div>
 
         {facts.length > 0 ? (
-          <section className="mt-20 border-t border-line pt-12 md:mt-28">
+          <section className="mt-20 border-t border-line pt-14 md:mt-28">
             <h2 className="font-serif text-3xl">Карактеристики</h2>
-            <dl className="mt-8 grid gap-6 sm:grid-cols-2">
+            <dl className="mt-10 grid gap-x-12 gap-y-8 sm:grid-cols-2">
               {facts.map((fact) => (
-                <div key={fact.label}>
+                <div key={fact.label} className="border-t border-line pt-4">
                   <dt className="text-[0.68rem] tracking-[0.18em] uppercase text-muted">{fact.label}</dt>
                   <dd className="mt-2 text-base leading-7">{fact.value}</dd>
                 </div>

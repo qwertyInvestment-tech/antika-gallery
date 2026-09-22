@@ -28,6 +28,10 @@ export function categoryPath(slug: string) {
   return `/категории/${slug}`;
 }
 
+export function storyPath(slug: string) {
+  return `/приказни/${slug}`;
+}
+
 export function customerOrderPath(id: string) {
   return `/моите-нарачки/${id}`;
 }
@@ -43,6 +47,7 @@ export const routeRewrites = [
   { source: "/категории/:slug", destination: "/kategorii/:slug" },
   { source: "/предмет/:slug", destination: "/predmet/:slug" },
   { source: "/приказни", destination: "/prikazni" },
+  { source: "/приказни/:slug", destination: "/prikazni/:slug" },
   { source: "/за-нас", destination: "/za-nas" },
   { source: "/контакт", destination: "/kontakt" },
   { source: "/пребарај", destination: "/prebaraj" },
